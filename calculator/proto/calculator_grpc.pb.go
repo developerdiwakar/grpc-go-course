@@ -19,7 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CalculatorService_Sum_FullMethodName = "/calculator.CalculatorService/Sum"
+	CalculatorService_Sum_FullMethodName   = "/calculator.CalculatorService/Sum"
+	CalculatorService_Prims_FullMethodName = "/calculator.CalculatorService/Prims"
 )
 
 // CalculatorServiceClient is the client API for CalculatorService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CalculatorServiceClient interface {
 	Sum(ctx context.Context, in *SumRequest, opts ...grpc.CallOption) (*SumResponse, error)
+	Prims(ctx context.Context, in *PrimsRequest, opts ...grpc.CallOption) (CalculatorService_PrimsClient, error)
 }
 
 type calculatorServiceClient struct {
@@ -46,11 +48,44 @@ func (c *calculatorServiceClient) Sum(ctx context.Context, in *SumRequest, opts 
 	return out, nil
 }
 
+func (c *calculatorServiceClient) Prims(ctx context.Context, in *PrimsRequest, opts ...grpc.CallOption) (CalculatorService_PrimsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CalculatorService_ServiceDesc.Streams[0], CalculatorService_Prims_FullMethodName, opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &calculatorServicePrimsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CalculatorService_PrimsClient interface {
+	Recv() (*PrimsResponse, error)
+	grpc.ClientStream
+}
+
+type calculatorServicePrimsClient struct {
+	grpc.ClientStream
+}
+
+func (x *calculatorServicePrimsClient) Recv() (*PrimsResponse, error) {
+	m := new(PrimsResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // CalculatorServiceServer is the server API for CalculatorService service.
 // All implementations must embed UnimplementedCalculatorServiceServer
 // for forward compatibility
 type CalculatorServiceServer interface {
 	Sum(context.Context, *SumRequest) (*SumResponse, error)
+	Prims(*PrimsRequest, CalculatorService_PrimsServer) error
 	mustEmbedUnimplementedCalculatorServiceServer()
 }
 
@@ -60,6 +95,9 @@ type UnimplementedCalculatorServiceServer struct {
 
 func (UnimplementedCalculatorServiceServer) Sum(context.Context, *SumRequest) (*SumResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Sum not implemented")
+}
+func (UnimplementedCalculatorServiceServer) Prims(*PrimsRequest, CalculatorService_PrimsServer) error {
+	return status.Errorf(codes.Unimplemented, "method Prims not implemented")
 }
 func (UnimplementedCalculatorServiceServer) mustEmbedUnimplementedCalculatorServiceServer() {}
 
@@ -92,6 +130,27 @@ func _CalculatorService_Sum_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalculatorService_Prims_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(PrimsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CalculatorServiceServer).Prims(m, &calculatorServicePrimsServer{stream})
+}
+
+type CalculatorService_PrimsServer interface {
+	Send(*PrimsResponse) error
+	grpc.ServerStream
+}
+
+type calculatorServicePrimsServer struct {
+	grpc.ServerStream
+}
+
+func (x *calculatorServicePrimsServer) Send(m *PrimsResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // CalculatorService_ServiceDesc is the grpc.ServiceDesc for CalculatorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -104,6 +163,12 @@ var CalculatorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CalculatorService_Sum_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Prims",
+			Handler:       _CalculatorService_Prims_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "calculator/proto/calculator.proto",
 }
