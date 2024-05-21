@@ -4,12 +4,16 @@ package calculator;
 
 import "calculator/proto/sum.proto";
 import "calculator/proto/prims.proto";
-
+import "calculator/proto/avg.proto";
 
 option go_package = "github.com/developerdiwakar/grpc-go-course/calculator/proto";
 
 
 service CalculatorService {
+    // gRPC Unary
     rpc Sum(SumRequest) returns (SumResponse);
+    // gRPC Server Streaming
     rpc Prims(PrimsRequest) returns (stream PrimsResponse);
+    // gRPC Client Streaming
+    rpc Avg(stream AvgRequest) returns (AvgResponse);
 }
