@@ -13,7 +13,12 @@ message GreetResponse {
 }
 
 service GreetService {
+  // gRPC Unary API
   rpc Greet(GreetRequest) returns (GreetResponse);
+  // gRPC Server Streaming API
   rpc GreetManyTimes(GreetRequest) returns (stream GreetResponse);
+  // gRPC Client Streaming API
   rpc LongGreet (stream GreetRequest) returns (GreetResponse);
+  // gRPC Bi-directional API
+  rpc GreetEveryone (stream GreetRequest) returns (stream GreetResponse);
 };
