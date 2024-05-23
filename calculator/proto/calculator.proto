@@ -5,7 +5,7 @@ package calculator;
 import "calculator/proto/sum.proto";
 import "calculator/proto/prims.proto";
 import "calculator/proto/avg.proto";
-
+import "calculator/proto/max.proto";
 option go_package = "github.com/developerdiwakar/grpc-go-course/calculator/proto";
 
 
@@ -16,4 +16,6 @@ service CalculatorService {
     rpc Prims(PrimsRequest) returns (stream PrimsResponse);
     // gRPC Client Streaming
     rpc Avg(stream AvgRequest) returns (AvgResponse);
+    // gRPC Bi-directional Streaming
+    rpc Max (stream MaxRequest) returns (stream MaxResponse);
 }
