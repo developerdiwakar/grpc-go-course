@@ -8,3 +8,6 @@ Install the protocol compiler plugins for Go using the following commands:
 Update your PATH so that the protoc compiler can find the plugins:
 
 - $ ```export PATH="$PATH:$(go env GOPATH)/bin"```
+
+# For Using Evans CLI
+- check out this link https://github.com/ktr0731/evans?tab=readme-ov-file#installation
