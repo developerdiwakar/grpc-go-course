@@ -21,4 +21,6 @@ service GreetService {
   rpc LongGreet (stream GreetRequest) returns (GreetResponse);
   // gRPC Bi-directional API
   rpc GreetEveryone (stream GreetRequest) returns (stream GreetResponse);
+  // gRPC Unary
+  rpc GreetWithDeadline (GreetRequest) returns (GreetResponse);
 };
