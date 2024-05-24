@@ -22,5 +22,7 @@ func main() {
 	// doSum(c)
 	// doPrims(c)
 	// getAvg(c)
-	doMax(c)
+	// doMax(c)
+	doSqrt(c, 3)
+	doSqrt(c, -3) // invalid argument
 }
