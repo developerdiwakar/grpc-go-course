@@ -23,5 +23,6 @@ func main() {
 
 	// id := createBlog(c)
 	// readBlog(c, id)
-	updateBlog(c, "665deff54d8c995d69e6d58d")
+	// updateBlog(c, "665deff54d8c995d69e6d58d")
+	listBlog(c)
 }
